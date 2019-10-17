@@ -1,17 +1,31 @@
 import { getService } from 'services/httpService';
-import { getEthBalanceService,
-  getAccountsService,
-  getHistoricalAccountsService } from 'services/web3Service';
+import {
+  getHistoricalAccountsService,
+  objservableAccountBalanceService } from 'services/web3Service';
 
 import * as ActionTypes from 'constants/ActionTypes';
 
-
+// This employs rxjs for streaming
 export const getEthBalances = () => (dispatch) => {
   dispatch({
     type: ActionTypes.GET_ETH_BALANCES,
   })
 
-  // getEthBalanceService()
+  objservableAccountBalanceService()
+  .subscribe(response => {
+    dispatch({
+      type: ActionTypes.GET_ETH_BALANCES_EVENT,
+      response
+    })
+  })
+}
+
+// this is my first attempt which returns after fetching all the data
+export const getEthBalances1 = () => (dispatch) => {
+  dispatch({
+    type: ActionTypes.GET_ETH_BALANCES,
+  })
+
   getHistoricalAccountsService()
   .then(response => {
     dispatch({
@@ -26,24 +40,3 @@ export const getEthBalances = () => (dispatch) => {
     })
   })
 }
-
-  export const removeFilter = () => (dispatch) => {
-      // do some stuff
-      dispatch({
-        type: "REMOVE_FILTER",
-      })
-
-      getService("Abc")
-      .then(response => {
-        dispatch({
-          type: "REMOVE_FILTER_SUCCESS",
-          response
-        })
-      })
-      .catch(error => {
-        dispatch({
-          type: "REMOVE_FILTER_ERROR",
-          error
-        })
-      })
-  }

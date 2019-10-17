@@ -27,7 +27,7 @@ class BalanceChart extends React.Component {
         <h3>
           Your account balance over last 30 days
         </h3>
-        <AreaChart width={730} height={250} data={this.props.data}
+        <AreaChart width={1000} height={450} data={this.props.data}
           margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
           <defs>
             <linearGradient id="colorUv" x1="0" y1="0" x2="0" y2="1">

@@ -17,11 +17,17 @@ const reducer = (state: FilterState = initialState, action: any) => {
         }
       break;
     }
+    case ActionTypes.GET_ETH_BALANCES_EVENT: {
+      nextState = { ... state,
+        balanceByDays: state.balanceByDays.concat(action.response)
+        }
+      break;
+    }
     default: {
       return state;
     }
   }
-  return nextState;  
+  return nextState;
 }
 
 export default reducer;

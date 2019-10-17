@@ -1,4 +1,6 @@
 import Web3 from 'web3';
+import moment from 'moment';
+import { Observable } from 'rxjs';
 
 const web3 = new Web3(new Web3.providers.HttpProvider("https://ropsten.infura.io/v3/22e9c4b465ff4940b60f556820d180fa"));
 // const web3 = new Web3(new Web3.providers.HttpProvider("http://rpc.ethapi.org:8545"));
@@ -31,7 +33,9 @@ export const getHistoricalAccountsService = async (address = "0x407d73d8a49eeb85
   const blocksByDays = await retrieveBlocks();
 
   for(var i=0; i<blocksByDays.length; ++i) {
-    const balance = await web3.eth.getBalance(address, blocksByDays[i].blockNumber);
+    balance = web3.utils.fromWei(balance, 'ether');
+    let balance = await web3.eth.getBalance(address, blocksByDays[i].blockNumber);
+    balance = web3.utils.fromWei(balance, 'ether');
     balanceByDays.push({date: blocksByDays[i].date, balance});
   }
   return balanceByDays;
@@ -53,7 +57,7 @@ const retrieveBlocks = async (pastNoOfDays = 30) => {
   while(true) {
     const block = await web3.eth.getBlock(blockNumber);
     if(block.timestamp < date.getTime()) {
-      blocksByDate.push({date: date.toDateString(), blockNumber})
+      blocksByDate.push({date: moment(date).format("MMM DD"), blockNumber})
       if(i<pastNoOfDays) {
         ++i;
         date.setDate(date.getDate()+1);
@@ -66,4 +70,34 @@ const retrieveBlocks = async (pastNoOfDays = 30) => {
   }
 
   return blocksByDate;
+}
+
+export const objservableAccountBalanceService = (address = "0x407d73d8a49eeb85d32cf465507dd71d507100c1", pastNoOfDays = 30) => {
+
+  return new Observable( async subscriber => {
+    var i = 0;
+    var date = new Date();
+    date.setDate(date.getDate()-pastNoOfDays); // go back 30 days
+
+    let blockNumber = await web3.eth.getBlockNumber();
+    console.log("Latest block", blockNumber);
+
+    while(true) {
+      const block = await web3.eth.getBlock(blockNumber);
+      if(block.timestamp < date.getTime()) {
+        // blocksByDate.push({date: date.toDateString(), blockNumber})
+        let balance = await web3.eth.getBalance(address, blockNumber);
+        balance = web3.utils.fromWei(balance, 'ether');
+        subscriber.next({date: moment(date).format("MMM DD"), balance}); // emit the data
+        if(i<pastNoOfDays) {
+          ++i;
+          date.setDate(date.getDate()+1);
+        } else {
+          subscriber.complete();
+          break;
+        }
+      };
+      --blockNumber;
+    }
+  });
 }
