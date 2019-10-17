@@ -51,7 +51,7 @@ class BalanceChart extends React.Component {
         </p>
         { address &&
           <h3>
-            {`Your account balance for ${address} over last 30 days`}
+            {`Your account balance for last 30 days`}
           </h3>
         }
         <AreaChart width={1000} height={450} data={this.props.data}
