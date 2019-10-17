@@ -1,3 +1,18 @@
+My approach to the test was to first understand the RPCs available and identify the necessary calls to be used.
+
+In my first attempt i managed to identify block numbers for each of the days going back 30 days and use the block number to fetch the account balance for a given address.
+This approach blocked the update to the redux store untill all the calls returned.
+
+Second attempt was to use RxJS to stream each retrieval of balance and update the store. This way the chart receives the time series data as and when it becomes available.
+
+The ETHUSD rate is retrieved early on when the app loads and used by the JSX(view layer). I took this approach with a view that showing USD equivalent was presentation logic. If this data had to be shared or persisted it could have been udpated in the reducer itself.
+
+Couldn't get to adding the accounts because of time, but it can be easily done by storing the account balances for unique account address instead of overwriting and adding it up in the UI or in the reducer.
+
+Finally on optimisation.
+With my limited knowledge of web3.js and ethereum/blockchain I can suggest that the blocks retrieved for each historic dates can be cached and used for retrieval of balances instead of calculating the block number each time.
+
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts
