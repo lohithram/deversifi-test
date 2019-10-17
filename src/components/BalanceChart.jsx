@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { AreaChart, XAxis, YAxis, Tooltip, Area, CartesianGrid } from 'recharts';
 
 // actions
+import { getETHUSDRate } from 'actions/rate-actions';
 import { getEthBalances } from 'actions/balance-actions';
 
 const propTypes = {
@@ -17,9 +18,10 @@ class BalanceChart extends React.Component {
   }
 
   componentDidMount() {
-    // this.props.getAccounts();
+    this.props.getETHUSDRate();
     this.props.getEthBalances();
   }
+
 
   render() {
     return (
@@ -34,24 +36,37 @@ class BalanceChart extends React.Component {
               <stop offset="5%" stopColor="#8884d8" stopOpacity={0.8}/>
               <stop offset="95%" stopColor="#8884d8" stopOpacity={0}/>
             </linearGradient>
+            <linearGradient id="colorPv" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="5%" stopColor="#82ca9d" stopOpacity={0.8}/>
+              <stop offset="95%" stopColor="#82ca9d" stopOpacity={0}/>
+            </linearGradient>
           </defs>
           <XAxis dataKey="date" />
           <YAxis />
           <CartesianGrid strokeDasharray="3 3" />
           <Tooltip />
           <Area type="monotone" dataKey="balance" stroke="#8884d8" fillOpacity={1} fill="url(#colorUv)" />
+          <Area type="monotone" dataKey="ETHUSD" stroke="#8877d8" fillOpacity={1} fill="url(#colorPv)" />
         </AreaChart>
       </div>
     );
   }
 }
 
+const applyETHUSDConversion = (data, rate) =>
+  data.map(({date, balance}) => ({
+    date,
+    balance,
+    ETHUSD: rate ? `${balance*rate}` : ""
+  }))
+
 const mapStateToProps = (state) => ({
-  data: state.balances.balanceByDays
+  rates: state.rates.rates,
+  data: applyETHUSDConversion(state.balances.balanceByDays, state.rates.rates.ETHUSD)
 })
 
 const mapDispatchToProps = (dispatch) => ({
-  // getAccounts: () => { dispatch(getAccounts()) },
+  getETHUSDRate: () => { dispatch(getETHUSDRate()) },
   getEthBalances: () => { dispatch(getEthBalances()) }
 })
 
