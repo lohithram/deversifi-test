@@ -15,20 +15,45 @@ const defaultProps = {
 class BalanceChart extends React.Component {
   constructor(props) {
     super(props);
+    this.addressInput = React.createRef();
+    this.onClick = this.onAddressAdd.bind(this);
   }
 
   componentDidMount() {
     this.props.getETHUSDRate();
-    this.props.getEthBalances();
+    // this.props.getEthBalances();
   }
 
+  onAddressAdd(event) {
+    event.preventDefault();
+    // offcourse you can employ controlled component or use redux form
+    const {value} = this.addressInput.current;
+    console.log("Address supplied", value);
+    this.props.getEthBalances(value);
+  }
 
   render() {
+    const {address} = this.props;
     return (
-      <div>
-        <h3>
-          Your account balance over last 30 days
-        </h3>
+      <div className="chart">
+        <p>
+          Account address
+          <input ref={this.addressInput}
+                  type="text"
+                  className=""
+                  id="addressInput"
+                  placeholder="0x89sdsdksld">
+          </input>
+          <button className="btn btn-primary btn-sm"
+                  onClick={this.onClick}>
+            Get balances
+          </button>
+        </p>
+        { address &&
+          <h3>
+            {`Your account balance for ${address} over last 30 days`}
+          </h3>
+        }
         <AreaChart width={1000} height={450} data={this.props.data}
           margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
           <defs>
@@ -61,13 +86,14 @@ const applyETHUSDConversion = (data, rate) =>
   }))
 
 const mapStateToProps = (state) => ({
+  address: state.balances.address,
   rates: state.rates.rates,
   data: applyETHUSDConversion(state.balances.balanceByDays, state.rates.rates.ETHUSD)
 })
 
 const mapDispatchToProps = (dispatch) => ({
   getETHUSDRate: () => { dispatch(getETHUSDRate()) },
-  getEthBalances: () => { dispatch(getEthBalances()) }
+  getEthBalances: (value) => { dispatch(getEthBalances(value)) }
 })
 
 BalanceChart.propTypes = propTypes;

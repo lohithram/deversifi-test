@@ -1,7 +1,8 @@
 import * as ActionTypes from 'constants/ActionTypes';
 
 interface FilterState {
-  balanceByDays: any[]
+  balanceByDays: any[],
+  address?: string
 }
 
 const initialState = {
@@ -11,6 +12,13 @@ const initialState = {
 const reducer = (state: FilterState = initialState, action: any) => {
   let nextState = state;
   switch(action.type) {
+    case ActionTypes.GET_ETH_BALANCES: {
+      nextState = { ... state,
+        address: action.address,
+        balanceByDays: []
+        }
+      break;
+    }
     case ActionTypes.GET_ETH_BALANCES_SUCCESS: {
       nextState = { ... state,
         balanceByDays: action.response

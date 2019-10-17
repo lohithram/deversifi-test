@@ -6,12 +6,13 @@ import {
 import * as ActionTypes from 'constants/ActionTypes';
 
 // This employs rxjs for streaming
-export const getEthBalances = () => (dispatch) => {
+export const getEthBalances = (address) => (dispatch) => {
   dispatch({
     type: ActionTypes.GET_ETH_BALANCES,
+    address
   })
 
-  objservableAccountBalanceService()
+  objservableAccountBalanceService(address)
   .subscribe(response => {
     dispatch({
       type: ActionTypes.GET_ETH_BALANCES_EVENT,
