@@ -12,6 +12,7 @@ Couldn't get to adding the accounts because of time, but it can be easily done b
 Finally on optimisation.
 With my limited knowledge of web3.js and ethereum/blockchain I can suggest that the blocks retrieved for each historic dates can be cached and used for retrieval of balances instead of calculating the block number each time.
 
+I have used Infura endpoint -> mainnet.infura.io/v3/22e9c4b465ff4940b60f556820d180fa
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
