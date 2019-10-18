@@ -17,7 +17,7 @@ I might have overshot the budget, if you find trouble replace the endpoint with 
 ropsten.infura.io/v3/9e3a3d1e9e2c498d914c5a2ffb1680e9
 
 
-To find the block closest to the time, upon finding it takes roughly 15 seconds to create one ethereum block, i make jumps proportional to the difference in current retrieved block timestamp and target time. Code is below. I didn't upload this code because i was getting 'cannot access archive state'. 
+To find the block closest to the time, upon finding it takes roughly 15 seconds to create one ethereum block, i make jumps proportional to the difference in current retrieved block timestamp and target time. Code is below. I didn't upload this code because i was getting 'cannot access archive state' error from infura endpoint. Sounded like the test network i was using didnt have information of older blocks ? 
 
 ```
     while(true) {
