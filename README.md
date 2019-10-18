@@ -13,6 +13,34 @@ Finally on optimisation.
 With my limited knowledge of web3.js and ethereum/blockchain I can suggest that the blocks retrieved for each historic dates can be cached and used for retrieval of balances instead of calculating the block number each time.
 
 I have used Infura endpoint -> mainnet.infura.io/v3/22e9c4b465ff4940b60f556820d180fa
+I might have overshot the budget, if you find trouble replace the endpoint with the one below created today.
+ropsten.infura.io/v3/9e3a3d1e9e2c498d914c5a2ffb1680e9
+
+
+To find the block closest to the time, upon finding it takes roughly 15 seconds to create one ethereum block, i make jumps proportional to the difference in current retrieved block timestamp and target time. Code is below. I didn't upload this code because i was getting 'cannot access archive state'. 
+
+```
+    while(true) {
+      const block = await web3.eth.getBlock(blockNumber);
+      const unixTime = Math.floor(date.getTime()/1000);
+      if(block.timestamp <= unixTime) {
+        let balance = await web3.eth.getBalance(address, blockNumber);
+        console.log("Block number", blockNumber)
+        console.log("balance", balance)
+        balance = web3.utils.fromWei(balance);
+        subscriber.next({ts: block.timestamp, date: moment(date).format("MMM DD"), balance}); // emit the data
+        if(i<pastNoOfDays) {
+          ++i;
+          date.setDate(date.getDate()-1);
+        } else {
+          subscriber.complete();
+          break;
+        }
+      };
+      const jumps = Math.floor(Math.abs(block.timestamp - unixTime)/15);
+      blockNumber -= (jumps > 0 ? jumps : 5);
+    }
+```
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
